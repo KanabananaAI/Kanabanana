@@ -1,0 +1,329 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --board-bg: #d2d6dc;
+    --board-card: #e4e7ec;
+    --board-border: #a8b0bc;
+    --board-hover: #d8dce3;
+    --board-surface: #dde1e7;
+    --text-primary: #0d1117;
+    --text-secondary: #24292f;
+    --text-muted: #57606a;
+    --scrollbar-track: #c4c9d2;
+    --scrollbar-thumb: #9aa1ae;
+    --scrollbar-thumb-hover: #6b7280;
+    color-scheme: light;
+  }
+
+  .dark {
+    --board-bg: #0a0a0a;
+    --board-card: #1a1a1a;
+    --board-border: #2a2a2a;
+    --board-hover: #222222;
+    --board-surface: #141414;
+    --text-primary: #e5e7eb;
+    --text-secondary: #9ca3af;
+    --text-muted: #4b5563;
+    --scrollbar-track: #0a0a0a;
+    --scrollbar-thumb: #2a2a2a;
+    --scrollbar-thumb-hover: #3a3a3a;
+    color-scheme: dark;
+  }
+
+  .banana-light {
+    --board-bg: #f8f3dc;
+    --board-card: #fffef7;
+    --board-border: #d8cc70;
+    --board-hover: #f0eaca;
+    --board-surface: #f2ecd2;
+    --text-primary: #1a1800;
+    --text-secondary: #5a5530;
+    --text-muted: #8a8460;
+    --scrollbar-track: #f0eaca;
+    --scrollbar-thumb: #d0c468;
+    --scrollbar-thumb-hover: #b8aa50;
+    color-scheme: light;
+  }
+
+  .banana-dark {
+    --board-bg: #1e1c14;
+    --board-card: #c8b400;
+    --board-border: #4a4535;
+    --board-hover: #2d2b22;
+    --board-surface: #262419;
+    --text-primary: #fff8c4;
+    --text-secondary: #edd94e;
+    --text-muted: #c4ad35;
+    --scrollbar-track: #1e1c14;
+    --scrollbar-thumb: #4a4535;
+    --scrollbar-thumb-hover: #5e5848;
+    color-scheme: dark;
+  }
+
+  .experimental {
+    --board-bg: #0c1222;
+    --board-card: #141e35;
+    --board-border: #1e2d4a;
+    --board-hover: #182743;
+    --board-surface: #101a2e;
+    --text-primary: #e8ecf4;
+    --text-secondary: #8e9baf;
+    --text-muted: #4a5568;
+    --scrollbar-track: #0c1222;
+    --scrollbar-thumb: #1e2d4a;
+    --scrollbar-thumb-hover: #2a3f5e;
+    --exp-accent: #38bdf8;
+    --exp-accent-dim: #1e6b99;
+    --exp-glow: rgba(56, 189, 248, 0.08);
+    --exp-shadow: rgba(0, 0, 0, 0.45);
+    --exp-shadow-lg: rgba(0, 0, 0, 0.6);
+    color-scheme: dark;
+  }
+
+  /* Dark text on bright yellow card surfaces in banana-dark */
+  .banana-dark .bg-board-card {
+    --text-primary: #1a1700;
+    --text-secondary: #2e2800;
+    --text-muted: #3a3200;
+    --board-border: #9e8e00;
+  }
+
+  /* Reset to bright text for dark-bg areas nested inside cards */
+  .banana-dark .bg-board-card .bg-board-bg,
+  .banana-dark .bg-board-card .bg-board-surface {
+    --text-primary: #fff8c4;
+    --text-secondary: #edd94e;
+    --text-muted: #c4ad35;
+    --board-border: #4a4535;
+  }
+
+  html {
+    @apply antialiased;
+  }
+
+  body {
+    @apply bg-board-bg text-text-primary transition-colors duration-200;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+  }
+
+  *::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 3px;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
+  }
+}
+
+@layer utilities {
+  @keyframes agent-scan {
+    0% { transform: translateX(-100%); }
+    80% { transform: translateX(500%); }
+    100% { transform: translateX(500%); }
+  }
+
+  @keyframes agent-bar {
+    0%, 100% { transform: scaleY(0.35); opacity: 0.35; }
+    50% { transform: scaleY(1); opacity: 0.9; }
+  }
+
+  @keyframes live-ping {
+    0% { transform: scale(1); opacity: 0.75; }
+    75%, 100% { transform: scale(2.8); opacity: 0; }
+  }
+
+  .scan-sweep {
+    animation: agent-scan 2.2s ease-in-out infinite;
+  }
+
+  .agent-bar {
+    animation: agent-bar 1s ease-in-out infinite;
+    transform-origin: bottom;
+  }
+
+  .live-ping {
+    animation: live-ping 1.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+
+  @keyframes live-dot-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  @keyframes live-badge-glow {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+
+  .live-dot {
+    animation: live-dot-pulse 1.2s ease-in-out infinite;
+  }
+
+  .live-badge {
+    animation: live-badge-glow 2s ease-in-out infinite;
+  }
+}
+
+@layer components {
+  .xterm-container {
+    @apply w-full rounded transition-colors duration-200;
+    background: var(--board-bg);
+    padding: 4px;
+    border: 1px solid var(--board-border);
+  }
+
+  .xterm-container .xterm {
+    padding: 4px;
+    height: 100%;
+  }
+
+  .xterm-container .xterm-screen {
+    height: 100%;
+  }
+
+  .xterm-container .xterm-viewport {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+  }
+
+  .xterm-container .xterm-viewport::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .xterm-container .xterm-viewport::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+  }
+
+  .xterm-container .xterm-viewport::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 3px;
+  }
+}
+
+/* ── Banana-dark overrides for hardcoded Tailwind classes ──────────── */
+/* Unlayered CSS beats all @layer rules (Tailwind utilities are layered) */
+
+/* Gray button/tab backgrounds → warm banana grey */
+.banana-dark .bg-gray-200,
+.banana-dark .dark\:bg-gray-700 {
+  background-color: #3a3730;
+}
+
+/* Gray text → banana bright */
+.banana-dark .text-gray-900,
+.banana-dark .dark\:text-gray-200 {
+  color: #fff8c4;
+}
+
+/* Toggle knob */
+.banana-dark .dark\:bg-gray-300 {
+  background-color: #edd94e;
+}
+
+/* Hover states */
+.banana-dark .hover\:bg-gray-300:hover,
+.banana-dark .dark\:hover\:bg-gray-600:hover {
+  background-color: #4a4740;
+}
+
+/* Agent badges on bright card surfaces: dark backdrop for readability */
+.banana-dark .bg-board-card [class*="text-agent-"][class*="bg-agent-"] {
+  background-color: rgba(30, 28, 20, 0.8) !important;
+}
+
+/* Tag badges on bright card surfaces: darken for contrast */
+.banana-dark .bg-board-card span[style*="background-color"][class*="rounded"] {
+  filter: brightness(0.7) saturate(1.4);
+}
+
+/* Select option dropdowns: warm grey bg with bright text */
+.banana-dark option {
+  background-color: #262419;
+  color: #fff8c4;
+}
+
+/* ── Experimental theme overrides ───────────────────────────────────── */
+
+/* Card elevation: layered shadow for depth + subtle glow accent on top edge */
+.experimental .bg-board-card {
+  box-shadow:
+    0 1px 0 0 var(--exp-glow),
+    0 2px 8px -1px var(--exp-shadow),
+    0 6px 20px -4px var(--exp-shadow-lg);
+  border-color: var(--board-border);
+  border-radius: 6px;
+}
+
+/* Card hover: lift + stronger glow */
+.experimental .bg-board-card:hover {
+  box-shadow:
+    0 1px 0 0 rgba(56, 189, 248, 0.14),
+    0 4px 12px -1px var(--exp-shadow),
+    0 10px 28px -6px var(--exp-shadow-lg);
+  border-color: #2a3f5e;
+}
+
+/* Column headers get a subtle bottom accent line */
+.experimental [data-rfd-droppable-id] > div:first-child {
+  border-bottom: 1px solid var(--board-border);
+}
+
+/* Gray button/tab backgrounds → deep blue-gray */
+.experimental .bg-gray-200,
+.experimental .dark\:bg-gray-700 {
+  background-color: #1a2640;
+}
+
+/* Gray text → cool blue-white */
+.experimental .text-gray-900,
+.experimental .dark\:text-gray-200 {
+  color: #e8ecf4;
+}
+
+/* Toggle knob */
+.experimental .dark\:bg-gray-300 {
+  background-color: var(--exp-accent);
+}
+
+/* Hover states */
+.experimental .hover\:bg-gray-300:hover,
+.experimental .dark\:hover\:bg-gray-600:hover {
+  background-color: #1e2d4a;
+}
+
+/* Select dropdowns */
+.experimental option {
+  background-color: #101a2e;
+  color: #e8ecf4;
+}
+
+/* Inputs and textareas: consistent with card surface */
+.experimental input,
+.experimental textarea,
+.experimental select {
+  background-color: #101a2e;
+  border-color: #1e2d4a;
+}
+
+/* Accent-colored status dots for running tasks */
+.experimental .bg-status-running {
+  box-shadow: 0 0 6px 1px rgba(56, 189, 248, 0.35);
+}

@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [opensource]
+  pull_request:
+    branches: [opensource]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20, 22, 24]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install server dependencies
+        run: npm install
+
+      - name: Install client dependencies
+        run: cd client && npm install
+
+      - name: Build client
+        run: npm run build
+
+      - name: TypeScript check (server)
+        run: npx tsc --noEmit

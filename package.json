@@ -1,0 +1,42 @@
+{
+  "name": "kanabanana",
+  "version": "0.1.0",
+  "description": "Self-hosted Kanban board with built-in AI agent orchestration",
+  "author": "bartsecond",
+  "license": "BUSL-1.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bartsecond/Kanaban.git"
+  },
+  "scripts": {
+    "dev": "concurrently -n server,client -c blue,green \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:all": "concurrently -n server,client,whisper -c blue,green,magenta \"npm run dev:server\" \"npm run dev:client\" \"npm run dev:whisper\"",
+    "dev:server": "tsx server/index.ts",
+    "dev:client": "cd client && npm run dev",
+    "dev:whisper": "python whisper/server.py",
+    "build": "cd client && npm run build",
+    "start": "tsx server/index.ts",
+    "db:reset": "rm -f data/kanaban.db && npm run start"
+  },
+  "dependencies": {
+    "@lydell/node-pty": "^1.2.0-beta.3",
+    "@sinclair/typebox": "^0.34.48",
+    "better-sqlite3": "^11.7.0",
+    "croner": "^10.0.1",
+    "express": "^4.21.0",
+    "express-rate-limit": "^8.3.2",
+    "helmet": "^8.1.0",
+    "socket.io": "^4.8.0",
+    "uuid": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/express": "^5.0.0",
+    "@types/helmet": "^0.0.48",
+    "@types/node": "^22.0.0",
+    "@types/uuid": "^10.0.0",
+    "concurrently": "^9.1.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}
