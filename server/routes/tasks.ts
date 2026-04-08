@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import express from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { readdirSync, statSync, existsSync, mkdirSync, writeFileSync, unlinkSync, rmSync } from 'fs';
+import { execSync } from 'child_process';
 import path from 'path';
 import { homedir } from 'os';
 import db from '../db.js';
@@ -1002,10 +1003,16 @@ router.get('/api/browse-dirs', (req: Request, res: Response) => {
     const rawDir = (req.query.dir as string) || homedir();
     const dir = path.resolve(rawDir);
 
-    // Prevent path traversal — restrict browsing to user's home directory
-    const home = homedir();
-    if (!dir.startsWith(home) && dir !== path.dirname(home)) {
-      res.status(403).json({ error: 'Access denied: path outside home directory' });
+    // On Windows, if browsing a drive root (e.g. "C:\"), list available drives instead
+    // when the user navigates above a drive root via ".."
+    if (process.platform === 'win32' && dir === path.dirname(dir)) {
+      // At filesystem root — list all drive letters
+      const drives = getWindowsDrives();
+      res.json({
+        current: dir,
+        parent: dir,
+        dirs: drives.map((d) => ({ name: d, path: d + '\\' })),
+      });
       return;
     }
 
@@ -1028,5 +1035,27 @@ router.get('/api/browse-dirs', (req: Request, res: Response) => {
     res.status(400).json({ error: 'Cannot read directory', detail: String(err) });
   }
 });
+
+/** List available Windows drive letters (e.g. ['C:', 'D:']). */
+function getWindowsDrives(): string[] {
+  try {
+    const stdout = execSync('wmic logicaldisk get name', { encoding: 'utf-8' });
+    return stdout
+      .split('\n')
+      .map((line) => line.trim())
+      .filter((line) => /^[A-Z]:$/i.test(line));
+  } catch {
+    // Fallback: scan A-Z for accessible drives
+    const drives: string[] = [];
+    for (let i = 65; i <= 90; i++) {
+      const letter = String.fromCharCode(i) + ':';
+      try {
+        readdirSync(letter + '\\');
+        drives.push(letter);
+      } catch { /* drive not accessible */ }
+    }
+    return drives;
+  }
+}
 
 export default router;
