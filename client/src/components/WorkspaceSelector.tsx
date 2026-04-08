@@ -82,6 +82,11 @@ export default function WorkspaceSelector({
 
   const handleSelectDir = (dirPath: string) => {
     setNewPath(dirPath)
+    // Auto-fill workspace name from folder name unless user already typed one
+    if (!newName.trim()) {
+      const folderName = dirPath.replace(/[\\/]+$/, '').split(/[\\/]/).pop() || ''
+      setNewName(folderName)
+    }
     setShowBrowser(false)
   }
 
@@ -292,7 +297,7 @@ export default function WorkspaceSelector({
                 <input
                   type="text"
                   className="flex-1 bg-board-bg border border-board-border rounded px-2.5 py-1.5 text-sm text-text-primary font-mono focus:outline-none focus:border-text-secondary"
-                  placeholder="C:\projects\my-app"
+                  placeholder="D:\projects\my-app"
                   value={newPath}
                   onChange={(e) => setNewPath(e.target.value)}
                   onKeyDown={(e) => {
